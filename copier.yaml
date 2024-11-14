@@ -1,0 +1,135 @@
+_jinja_extensions:
+    - copier_templates_extensions.TemplateExtensionLoader
+    - extensions/context.py:DependenciesUpdater
+_subdirectory: "template_src"
+
+project_name:
+  type: str
+  help: What is your project name? Using plain english.
+
+repository_name:
+  type: str
+  help: What is your repository name?
+  default: "{{ project_name.lower().replace(' ', '-').replace('_', '-') }}"
+
+module_name:
+  type: str
+  help: What is your Python module name?
+  default: "{{ repository_name.replace('-', '_') }}"
+
+author_name:
+  type: str
+  help: What is your name?
+  default: "John Doe"
+
+author_email:
+  type: str
+  help: What is your email?
+  default: "john.doe@example.com"
+
+# project_layout:
+#   type: str # If you are mixing types, better be explicit
+#   choices:
+#     flat: "flat"
+#     src: "src"
+#   default: "flat"
+#   help: "How would you like to layout your project? Reference: https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/"
+
+python_version:
+  type: str
+  help: What version of Python do you want to use?
+  default: "3.12"
+
+use_precommit:
+  type: bool
+  help: Use pre-commit?
+  default: true
+
+use_ruff:
+  type: bool
+  help: Use ruff?
+  default: true
+
+use_mypy:
+  type: bool
+  help: Use mypy?
+  default: true
+
+ci_provider:
+  type: str
+  choices:
+    Github: "github"
+    Azure: "azure"
+
+get_newest_version_of_libraries_from_web:
+  type: bool
+  help: Get the newest version of libraries from the web? Will perform a simple request to determine the latest version of the libraries.
+  default: true
+
+should_freeze_dependencies:
+  type: bool
+  help: |
+    Freeze dependencies?
+    If true, will set the dependencies versions with '==' to the latest version of the library.
+    If false, will set the dependencies versions with '>=' to the latest version of the library.
+  default: true
+
+pre_commit_version:
+  type: str
+  help: What version of pre-commit do you want to use?
+  default: "5.0.0"
+  when: "{{ not get_newest_version_of_libraries_from_web and use_precommit }}"
+
+ruff_version:
+  type: str
+  help: What version of ruff do you want to use?
+  default: "0.7.3"
+  when: "{{ not get_newest_version_of_libraries_from_web and use_ruff }}"
+
+mypy_version:
+  type: str
+  help: What version of mypy do you want to use?
+  default: "1.13.0"
+  when: "{{ not get_newest_version_of_libraries_from_web and use_mypy }}"
+
+mdformat_version:
+  type: str
+  help: What version of mdformat do you want to use in pre-commit?
+  default: "0.7.18"
+  when: "{{ not get_newest_version_of_libraries_from_web and use_precommit }}"
+
+should_ask_for_dependencies:
+  type: bool
+  help: Should we ask for the dependencies?
+  default: false
+
+app_dependencies:
+  type: json
+  multiline: true
+  help: What app dependencies do you need?
+  default: "{}"
+  when: "{{ should_ask_for_dependencies }}"
+dev_dependencies:
+  type: json
+  multiline: true
+  help: Add additional development dependencies.
+  when: "{{ should_ask_for_dependencies }}"
+  default: |
+    {% set dev_dependencies = [
+      "pytest",
+      "pytest-randomly",
+      "pytest-cov",
+      "pytest-xdist"
+    ] %}
+    {% if use_mypy %}
+    {% set _ = dev_dependencies.append("mypy") %}
+    {% endif %}
+    {% if use_ruff %}
+    {% set _ = dev_dependencies.append("ruff") %}
+    {% endif %}
+    {% if use_precommit %}
+    {% set _ = dev_dependencies.append("pre-commit") %}
+    {% endif %}
+    {% set dev_dependencies = dev_dependencies | unique | sort %}
+    {{ dev_dependencies | tojson }}
+

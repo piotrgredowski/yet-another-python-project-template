@@ -1,4 +1,7 @@
-# yet-another-python-project-template
-# yet-another-python-project-template
-# yet-another-python-project-template
-# yet-another-python-project-template
+# Yet Another Python Project Template
+
+## Additional dependencies
+
+```bash
+pip install copier copier-templates-extensions
+```

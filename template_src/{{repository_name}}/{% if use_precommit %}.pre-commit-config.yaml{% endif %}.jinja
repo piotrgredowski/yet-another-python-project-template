@@ -1,0 +1,22 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v{{pre_commit_version}}
+  hooks:
+  - id: trailing-whitespace
+  - id: mixed-line-ending
+  - id: end-of-file-fixer
+  - id: check-yaml
+  - id: check-added-large-files
+  - id: check-merge-conflict
+- repo: https://github.com/executablebooks/mdformat
+  rev: {{mdformat_version}}
+  hooks:
+  - id: mdformat
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v{{ruff_version}}
+  hooks:
+  - id: ruff
+    types_or: [ python, pyi ]
+    args: [ --fix ]
+  - id: ruff-format
+    types_or: [ python, pyi ]

@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "{{ module_name }}"
+version = "0.1.0"
+authors = [
+  { name="{{ author_name }}", email="{{ author_email }}" },
+]
+description = "{{ project_name }}"
+readme = "README.md"
+requires-python = ">={{ python_version }}"
+classifiers = [
+    "Programming Language :: Python :: {{ python_version }}",
+]
+dependencies = [
+{%- for dependency in app_dependencies %}
+    "{{ dependency }}",
+{%- endfor %}
+]
+
+[project.optional-dependencies]
+dev = [
+{%- for dependency in dev_dependencies %}
+    "{{ dependency }}",
+{%- endfor %}
+]
