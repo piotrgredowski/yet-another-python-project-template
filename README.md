@@ -3,7 +3,7 @@
 ## Additional dependencies
 
 ```bash
-pip install copier copier-templates-extensions
+pip install copier copier-templates-extensions requests
 ```
 
 ## Run copier

@@ -21,8 +21,8 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Install Copier
-      run: pip install copier copier-templates-extensions
+    - name: Install Copier and required dependencies
+      run: pip install copier copier-templates-extensions requests
 
     - name: Update Copier Template
       run: |
