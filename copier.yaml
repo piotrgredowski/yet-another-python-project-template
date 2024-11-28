@@ -36,6 +36,11 @@ python_version:
   help: What version of Python do you want to use?
   default: "3.12"
 
+use_uv:
+  type: bool
+  help: Use uv for managing dependencies?
+  default: true
+
 use_precommit:
   type: bool
   help: Use pre-commit?

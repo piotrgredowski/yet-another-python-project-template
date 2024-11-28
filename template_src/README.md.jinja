@@ -4,13 +4,12 @@
 
 To install the dependencies, run
 
-```bash
-pip install -e ".[dev]"
-```
-
-or using uv
-
+{% if use_uv %}
 ```bash
 uv pip install -e ".[dev]"
 ```
-
+{% else %}
+```bash
+pip install -e ".[dev]"
+```
+{% endif %}

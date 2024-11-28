@@ -20,7 +20,11 @@ dependencies = [
 {%- endfor %}
 ]
 
+{% if use_uv %}
+[dependency-groups]
+{% else %}
 [project.optional-dependencies]
+{% endif %}
 dev = [
 {%- for dependency in dev_dependencies %}
     "{{ dependency }}",
