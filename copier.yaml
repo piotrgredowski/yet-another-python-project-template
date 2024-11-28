@@ -2,6 +2,7 @@ _jinja_extensions:
     - copier_templates_extensions.TemplateExtensionLoader
     - extensions/context.py:DependenciesUpdater
 _subdirectory: "template_src"
+answers_file: .copier-answers.main.yaml
 
 project_name:
   type: str
