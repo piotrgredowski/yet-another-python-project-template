@@ -5,6 +5,8 @@ on:
     branches:
       - main
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'  # Runs every day at midnight UTC
 
 jobs:
   update-template:
@@ -24,7 +26,7 @@ jobs:
 
     - name: Update Copier Template
       run: |
-        python -m copier recopy . -a .copier-answers.main.yaml --trust --skip-answered --conflict inline
+        python -m copier recopy .. --skip-answered -a fact-feast/.copier-answers.main.yaml --trust
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v7.0.5
