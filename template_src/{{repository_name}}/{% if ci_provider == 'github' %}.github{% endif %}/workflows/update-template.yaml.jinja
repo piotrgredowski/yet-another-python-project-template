@@ -1,0 +1,35 @@
+name: Update Copier Template
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  update-template:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install Copier
+      run: pip install copier copier-templates-extensions
+
+    - name: Update Copier Template
+      run: |
+        python -m copier recopy . -a .copier-answers.main.yaml --trust --skip-answered --conflict inline
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v7.0.5
+      with:
+        title: "Update Copier Template"
+        branch: "update-copier-template"
+        commit-message: "chore: update copier template"
+        delete-branch: true
