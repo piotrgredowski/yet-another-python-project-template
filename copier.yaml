@@ -1,8 +1,8 @@
 _jinja_extensions:
-    - copier_templates_extensions.TemplateExtensionLoader
-    - extensions/context.py:DependenciesUpdater
+  - copier_templates_extensions.TemplateExtensionLoader
+  - extensions/context.py:DependenciesUpdater
 _subdirectory: "template_src"
-answers_file: .copier-answers.main.yaml
+_answers_file: .copier-answers.main.yaml
 
 project_name:
   type: str
@@ -118,8 +118,9 @@ dev_dependencies:
   default: |
     {% set dev_dependencies = [
       "pytest",
-      "pytest-randomly",
       "pytest-cov",
+      "pytest-pretty",
+      "pytest-randomly",
       "pytest-xdist"
     ] %}
     {% if use_mypy %}

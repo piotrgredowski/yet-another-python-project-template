@@ -1,15 +1,19 @@
-from functools import lru_cache
 import typing
-import requests
+from functools import lru_cache
 
+import requests
 from copier_templates_extensions import ContextHook
+
 
 @lru_cache
 def _get_version_for_python_dependency(dependency: str) -> str:
     response = requests.get(f"https://pypi.org/pypi/{dependency}/json")
     return response.json()["info"]["version"]
 
-def _get_versions_for_python_dependencies(dependencies: typing.List[str], *,set_version_operator: str) -> typing.Dict[str, str]:
+
+def _get_versions_for_python_dependencies(
+    dependencies: typing.List[str], *, set_version_operator: str
+) -> list[str]:
     deps_with_versions = {}
     for dependency in dependencies:
         version = _get_version_for_python_dependency(dependency)
@@ -18,17 +22,20 @@ def _get_versions_for_python_dependencies(dependencies: typing.List[str], *,set_
         else:
             deps_with_versions[dependency] = ""
     return [
-        f"{dependency}{version}"
-        for dependency, version in deps_with_versions.items()
+        f"{dependency}{version}" for dependency, version in deps_with_versions.items()
     ]
+
 
 class Dependency(typing.TypedDict):
     name: str
     version: str
 
+
 class DependenciesUpdater(ContextHook):
     def hook(self, context):
-        should_get_newest_version_of_libraries_from_web = context["get_newest_version_of_libraries_from_web"]
+        should_get_newest_version_of_libraries_from_web = context[
+            "get_newest_version_of_libraries_from_web"
+        ]
         if not should_get_newest_version_of_libraries_from_web:
             return context
 
