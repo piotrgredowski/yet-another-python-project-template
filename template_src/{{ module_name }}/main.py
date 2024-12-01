@@ -5,7 +5,7 @@ def get_greeting() -> str:
 
 def main() -> None:
     """Main entry point."""
-    print(get_greeting())  # noqa: T201
+    print(get_greeting())
 
 
 if __name__ == "__main__":

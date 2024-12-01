@@ -12,7 +12,7 @@ project_name:
 module_name:
   type: str
   help: What is your Python module name?
-  default: "{{ project_name.replace(' ', '_') }}"
+  default: "{{ project_name.lower().replace(' ', '_').replace('-', '_') }}"
 
 author_name:
   type: str
