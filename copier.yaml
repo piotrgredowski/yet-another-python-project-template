@@ -1,6 +1,7 @@
 _jinja_extensions:
   - copier_templates_extensions.TemplateExtensionLoader
   - extensions/context.py:DependenciesUpdater
+  - extensions/context.py:AuthorFromGit
 _subdirectory: "template_src"
 _answers_file: .copier-answers.main.yaml
 
@@ -15,13 +16,13 @@ module_name:
 
 author_name:
   type: str
-  help: What is your name?
-  default: "John Doe"
+  help: What is your name? Default is the name from your git config.
+  default: "{{ get_author_name_from_git() }}"
 
 author_email:
   type: str
-  help: What is your email?
-  default: "john.doe@example.com"
+  help: What is your email? Default is the email from your git config.
+  default: "{{ get_author_email_from_git() }}"
 
 # project_layout:
 #   type: str # If you are mixing types, better be explicit

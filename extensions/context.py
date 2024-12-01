@@ -1,8 +1,11 @@
+import subprocess
 import typing
 from functools import lru_cache
 
 import requests
 from copier_templates_extensions import ContextHook
+from jinja2 import Environment
+from jinja2.ext import Extension
 
 
 @lru_cache
@@ -56,3 +59,20 @@ class DependenciesUpdater(ContextHook):
         context["dev_dependencies"] = dev_dependencies_with_versions
 
         return context
+
+
+def get_author_name_from_git() -> str:
+    output = subprocess.check_output(["git", "config", "user.name"])
+    return output.decode("utf-8").strip()
+
+
+def get_author_email_from_git() -> str:
+    output = subprocess.check_output(["git", "config", "user.email"])
+    return output.decode("utf-8").strip()
+
+
+class AuthorFromGit(Extension):
+    def __init__(self, environment: Environment):
+        environment.globals["get_author_name_from_git"] = get_author_name_from_git
+        environment.globals["get_author_email_from_git"] = get_author_email_from_git
+        super().__init__(environment)

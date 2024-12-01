@@ -1,0 +1,6 @@
+project_name: My great project
+repository_name: my-great-project
+module_name: my_great_project
+author_name: John Doe
+author_email: john.doe@example.com
+python_version: 3.12
