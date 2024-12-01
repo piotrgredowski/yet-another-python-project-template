@@ -17,6 +17,9 @@ logger = logging.getLogger(__name__)  # noqa: F821
 def _get_version_for_python_dependency(dependency: str) -> str:
     try:
         logger.debug(f"Getting version for '{dependency}'")
+        # NOTE: Getting the whole json is the only way to get the version.
+        #       For some of the packages it has a lot of information so it takes
+        #       a while to get the response.
         with urlopen(f"https://pypi.org/pypi/{dependency}/json", timeout=10) as response:
             data = json.loads(response.read())
             version = data["info"]["version"]
