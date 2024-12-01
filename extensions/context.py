@@ -1,17 +1,30 @@
+import json
+import logging
 import subprocess
 import typing
 from functools import lru_cache
+from urllib.request import urlopen
 
-import requests
 from copier_templates_extensions import ContextHook
 from jinja2 import Environment
 from jinja2.ext import Extension
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)  # noqa: F821
+
 
 @lru_cache
 def _get_version_for_python_dependency(dependency: str) -> str:
-    response = requests.get(f"https://pypi.org/pypi/{dependency}/json")
-    return response.json()["info"]["version"]
+    try:
+        logger.debug(f"Getting version for '{dependency}'")
+        with urlopen(f"https://pypi.org/pypi/{dependency}/json", timeout=10) as response:
+            data = json.loads(response.read())
+            version = data["info"]["version"]
+            logger.info(f"Got version for '{dependency}': {version}")
+            return version
+    except (OSError, json.JSONDecodeError) as e:
+        logger.error(f"Error getting version for {dependency}: {e}")
+        return ""
 
 
 def _get_versions_for_python_dependencies(
@@ -35,13 +48,16 @@ class Dependency(typing.TypedDict):
 
 
 class DependenciesUpdater(ContextHook):
-    def hook(self, context):
-        should_get_newest_version_of_libraries_from_web = context[
-            "get_newest_version_of_libraries_from_web"
-        ]
-        if not should_get_newest_version_of_libraries_from_web:
-            return context
+    def update_required_dependencies_version(self, context):
+        required_dependencies_version = context["required_dependencies_version"]
+        for dep_name, _ in required_dependencies_version.items():
+            required_dependencies_version[dep_name] = (
+                _get_version_for_python_dependency(dep_name)
+            )
 
+        context["required_dependencies_version"] = required_dependencies_version
+
+    def update_dependencies_version(self, context):
         should_freeze_dependencies = context["should_freeze_dependencies"]
         set_version_operator = "==" if should_freeze_dependencies else ">="
 
@@ -58,6 +74,14 @@ class DependenciesUpdater(ContextHook):
         )
         context["dev_dependencies"] = dev_dependencies_with_versions
 
+    def hook(self, context):
+        should_get_newest_version_of_libraries_from_web = context[
+            "get_newest_version_of_libraries_from_web"
+        ]
+        if not should_get_newest_version_of_libraries_from_web:
+            return context
+        self.update_dependencies_version(context)
+        self.update_required_dependencies_version(context)
         return context
 
 

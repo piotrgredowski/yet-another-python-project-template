@@ -74,31 +74,26 @@ should_freeze_dependencies:
     Freeze dependencies?
     If true, will set the dependencies versions with '==' to the latest version of the library.
     If false, will set the dependencies versions with '>=' to the latest version of the library.
-  default: true
+  default: false
 
-pre_commit_version:
-  type: str
-  help: What version of pre-commit do you want to use?
-  default: "5.0.0"
-  when: "{{ not get_newest_version_of_libraries_from_web and use_precommit }}"
+required_dependencies_version:
+  type: json
+  help: What versions should be used for below dependencies?
+  when: "{{ not get_newest_version_of_libraries_from_web }}"
+  default: |
+    {% set deps_with_versions = {"mdformat": "0.7.18"} %}
+    {% if use_precommit %}
+    {% set _ = deps_with_versions.update({"pre-commit": "5.0.0"}) %}
+    {% endif %}
+    {% if use_ruff %}
+    {% set _ = deps_with_versions.update({"ruff": "0.7.3"}) %}
+    {% endif %}
+    {% if use_mypy %}
+    {% set _ = deps_with_versions.update({"mypy": "1.13.0"}) %}
+    {% endif %}
 
-ruff_version:
-  type: str
-  help: What version of ruff do you want to use?
-  default: "0.7.3"
-  when: "{{ not get_newest_version_of_libraries_from_web and use_ruff }}"
-
-mypy_version:
-  type: str
-  help: What version of mypy do you want to use?
-  default: "1.13.0"
-  when: "{{ not get_newest_version_of_libraries_from_web and use_mypy }}"
-
-mdformat_version:
-  type: str
-  help: What version of mdformat do you want to use in pre-commit?
-  default: "0.7.18"
-  when: "{{ not get_newest_version_of_libraries_from_web and use_precommit }}"
+    {% set deps_with_versions = deps_with_versions %}
+    {{ deps_with_versions | tojson }}
 
 should_ask_for_dependencies:
   type: bool
@@ -111,6 +106,7 @@ app_dependencies:
   help: What app dependencies do you need?
   default: "{}"
   when: "{{ should_ask_for_dependencies }}"
+
 dev_dependencies:
   type: json
   multiline: true

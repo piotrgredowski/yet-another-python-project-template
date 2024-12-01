@@ -9,7 +9,17 @@
       "type": "debugpy",
       "request": "launch",
       "module": "copier",
-      "args": ["copy", ".", "_example", "--trust"],
+      "args": [
+        "copy",
+        ".",
+        "_example",
+        "--trust",
+        "--answers-file",
+        "../.copier-example-answers.yml"
+      ],
+      "env": {
+        "LOGLEVEL": "DEBUG"
+      },
       "justMyCode": false
     }
   ]

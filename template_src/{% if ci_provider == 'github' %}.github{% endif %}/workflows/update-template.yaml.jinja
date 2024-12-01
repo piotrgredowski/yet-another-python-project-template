@@ -19,7 +19,7 @@ jobs:
         python-version: {% raw %}${{ matrix.python-version }}{% endraw %}
 
     - name: Install Copier and required dependencies
-      run: uv pip install --system copier copier-templates-extensions requests
+      run: uv pip install --system copier copier-templates-extensions
 
     - name: Update Copier Template
       run: |
