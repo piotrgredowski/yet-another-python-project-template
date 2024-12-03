@@ -16,7 +16,7 @@ jobs:
     - name: Install uv
       uses: astral-sh/setup-uv@v3
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: {% raw %}${{ matrix.python-version }}{% endraw %}
 
     - name: Install the project
       run: uv sync --all-extras --dev
