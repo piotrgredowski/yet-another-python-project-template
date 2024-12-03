@@ -19,11 +19,11 @@ jobs:
         python-version: {% raw %}${{ matrix.python-version }}{% endraw %}
 
     - name: Install Copier and required dependencies
-      run: uv pip install --system copier copier-templates-extensions
+      run: uv sync
 
     - name: Update Copier Template
       run: |
-        python -m copier recopy . \
+        uv run copier recopy . \
           --skip-answered \
           -a .copier-answers.main.yaml \
           --trust \
