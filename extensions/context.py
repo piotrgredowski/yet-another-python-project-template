@@ -1,8 +1,8 @@
 import json
 import logging
+import pathlib
 import subprocess
 import typing
-from functools import lru_cache
 from urllib.request import urlopen
 
 from copier_templates_extensions import ContextHook
@@ -12,15 +12,21 @@ from jinja2.ext import Extension
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)  # noqa: F821
 
+cache = diskcache.Cache(
+    pathlib.Path(__file__).parent / "_cache", size_limit=1e8
+)  # 100 MB
 
-@lru_cache
+
+@cache.memoize()
 def _get_version_for_python_dependency(dependency: str) -> str:
     try:
         logger.debug(f"Getting version for '{dependency}'")
         # NOTE: Getting the whole json is the only way to get the version.
         #       For some of the packages it has a lot of information so it takes
         #       a while to get the response.
-        with urlopen(f"https://pypi.org/pypi/{dependency}/json", timeout=10) as response:
+        with urlopen(
+            f"https://pypi.org/pypi/{dependency}/json", timeout=10
+        ) as response:
             data = json.loads(response.read())
             version = data["info"]["version"]
             logger.info(f"Got version for '{dependency}': {version}")
