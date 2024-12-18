@@ -1,5 +1,6 @@
 import json
 import logging
+import pathlib
 import subprocess
 import typing
 from functools import lru_cache
@@ -110,6 +111,9 @@ class AuthorFromGit(Extension):
 class InitGitRepo(ContextHook):
     def hook(self, context):
         dst = context["_copier_conf"]["dst_path"]
+        if not pathlib.Path(dst).exists():
+            return context
+
         is_git_repo = subprocess.run(
             ["test", "-d", ".git"],
             capture_output=True,
@@ -118,6 +122,9 @@ class InitGitRepo(ContextHook):
         )
 
         if is_git_repo.returncode != 0:
-            logger.info("Initializing git repository")
-            subprocess.run(["git", "init"], cwd=dst)
+            try:
+                subprocess.run(["git", "init"], cwd=dst)
+                logger.info("Initialized git repository")
+            except Exception as e:
+                logger.error(f"Error initializing git repository: {e}")
         return context

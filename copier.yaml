@@ -14,6 +14,15 @@ project_name:
     'project_name' can't be empty
     {% endif %}
 
+project_layout:
+  type: str
+  choices:
+    flat: "flat"
+    src: "src"
+    one_file: "one_file"
+  default: "flat"
+  help: "How would you like to layout your project? One file is a single `main.py` file. Reference: https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/"
+
 module_name:
   type: str
   help: What is your Python module name?
@@ -22,6 +31,7 @@ module_name:
     {% if not module_name %}
     'module_name' can't be empty
     {% endif %}
+  when: "{{ project_layout == 'flat' }}"
 
 author_name:
   type: str
@@ -36,16 +46,6 @@ author_email:
   type: str
   help: What is your email? Default is the email from your git config.
   default: "{{ get_author_email_from_git() }}"
-
-project_layout:
-  type: str
-  choices:
-    flat: "flat"
-    src: "src"
-    one_file: "one_file"
-  default: "flat"
-  help: "How would you like to layout your project? One file is a single `main.py` file. Reference: https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/"
-
 
 python_version:
   type: str
