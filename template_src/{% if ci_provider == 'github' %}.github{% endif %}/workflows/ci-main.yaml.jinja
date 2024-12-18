@@ -23,7 +23,6 @@ jobs:
 
     - name: Run tests
       run: uv run pytest .
-
 {% if use_precommit %}
     - uses: pre-commit/action@v3.0.1
       with:

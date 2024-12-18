@@ -20,7 +20,9 @@ def _get_version_for_python_dependency(dependency: str) -> str:
         # NOTE: Getting the whole json is the only way to get the version.
         #       For some of the packages it has a lot of information so it takes
         #       a while to get the response.
-        with urlopen(f"https://pypi.org/pypi/{dependency}/json", timeout=10) as response:
+        with urlopen(
+            f"https://pypi.org/pypi/{dependency}/json", timeout=10
+        ) as response:
             data = json.loads(response.read())
             version = data["info"]["version"]
             logger.info(f"Got version for '{dependency}': {version}")
@@ -103,3 +105,19 @@ class AuthorFromGit(Extension):
         environment.globals["get_author_name_from_git"] = get_author_name_from_git
         environment.globals["get_author_email_from_git"] = get_author_email_from_git
         super().__init__(environment)
+
+
+class InitGitRepo(ContextHook):
+    def hook(self, context):
+        dst = context["_copier_conf"]["dst_path"]
+        is_git_repo = subprocess.run(
+            ["test", "-d", ".git"],
+            capture_output=True,
+            text=True,
+            cwd=dst,
+        )
+
+        if is_git_repo.returncode != 0:
+            logger.info("Initializing git repository")
+            subprocess.run(["git", "init"], cwd=dst)
+        return context

@@ -1,15 +1,42 @@
 # {{ project_name }}
 
 ## Development
+{% if not use_uv %}
+Create and activate a virtual environment
 
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+{% endif %}
 To install the dependencies, run
-
 {% if use_uv %}
 ```bash
-uv pip install -e ".[dev]"
+uv sync
 ```
 {% else %}
 ```bash
 pip install -e ".[dev]"
 ```
-{% endif -%}
+{% endif %}
+## Updating the template
+
+This repository was created from template repository.
+Template can change over time, and you can update it by running in the root of the repository:
+
+```bash
+{% if use_uv %}uv run {%endif%}copier update . \
+    --skip-answered \
+    --skip-tasks \
+    --answers-file .copier-answers.main.yaml \
+    --trust \
+    --conflict inline \
+    --skip .ruff.toml \
+    --skip .github/workflows \
+    {%- if project_layout == 'one_file' %}
+    --skip main.py
+    {% elif project_layout == 'flat' %}
+    --skip {{ module_name }}
+    {% elif project_layout == 'src' %}
+    --skip src{% endif %}
+```

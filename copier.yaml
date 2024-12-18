@@ -2,35 +2,50 @@ _jinja_extensions:
   - copier_templates_extensions.TemplateExtensionLoader
   - extensions/context.py:DependenciesUpdater
   - extensions/context.py:AuthorFromGit
+  - extensions/context.py:InitGitRepo
 _subdirectory: "template_src"
 _answers_file: .copier-answers.main.yaml
 
 project_name:
   type: str
   help: What is your project name? Using plain english.
+  validator: >-
+    {% if not project_name %}
+    'project_name' can't be empty
+    {% endif %}
 
 module_name:
   type: str
   help: What is your Python module name?
   default: "{{ project_name.lower().replace(' ', '_').replace('-', '_') }}"
+  validator: >-
+    {% if not module_name %}
+    'module_name' can't be empty
+    {% endif %}
 
 author_name:
   type: str
   help: What is your name? Default is the name from your git config.
   default: "{{ get_author_name_from_git() }}"
+  validator: >-
+    {% if not author_name %}
+    'author_name' can't be empty
+    {% endif %}
 
 author_email:
   type: str
   help: What is your email? Default is the email from your git config.
   default: "{{ get_author_email_from_git() }}"
 
-# project_layout:
-#   type: str # If you are mixing types, better be explicit
-#   choices:
-#     flat: "flat"
-#     src: "src"
-#   default: "flat"
-#   help: "How would you like to layout your project? Reference: https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/"
+project_layout:
+  type: str
+  choices:
+    flat: "flat"
+    src: "src"
+    one_file: "one_file"
+  default: "flat"
+  help: "How would you like to layout your project? One file is a single `main.py` file. Reference: https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/"
+
 
 python_version:
   type: str
@@ -79,7 +94,6 @@ should_freeze_dependencies:
 required_dependencies_version:
   type: json
   help: What versions should be used for below dependencies?
-  when: "{{ not get_newest_version_of_libraries_from_web }}"
   default: |
     {% set deps_with_versions = {"mdformat": "0.7.18"} %}
     {% if use_precommit %}
@@ -92,7 +106,6 @@ required_dependencies_version:
     {% set _ = deps_with_versions.update({"mypy": "1.13.0"}) %}
     {% endif %}
 
-    {% set deps_with_versions = deps_with_versions %}
     {{ deps_with_versions | tojson }}
 
 should_ask_for_dependencies:

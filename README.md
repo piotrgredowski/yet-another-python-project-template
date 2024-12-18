@@ -10,7 +10,9 @@ You need to have Python packages installed:
 You can install them with the following command:
 
 ```bash
-pip install copier copier-templates-extensions requests
+pip install copier copier-templates-extensions
+# or
+uv tool install copier --with copier-templates-extensions
 ```
 
 ## Run copier

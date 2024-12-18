@@ -1,0 +1,11 @@
+{% if project_layout == 'one_file' %}
+from main import get_greeting
+{% elif project_layout == 'flat' %}
+from {{ module_name }}.main import get_greeting
+{% elif project_layout == 'src' %}
+from src.main import get_greeting
+{% endif %}
+
+
+def test_get_greeting():
+    assert get_greeting() == "Hello, world!"
