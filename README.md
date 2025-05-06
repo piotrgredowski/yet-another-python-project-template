@@ -18,7 +18,7 @@ uv tool install copier --with copier-templates-extensions
 ## Run copier
 
 ```bash
-copier copy --vsc-ref HEAD https://github.com/piotrgredowski/yet-another-python-project-template <name_of_output_dir>
+copier copy --vcs-ref HEAD https://github.com/piotrgredowski/yet-another-python-project-template <name_of_output_dir>
 ```
 
 ## Creating a new project using this template
